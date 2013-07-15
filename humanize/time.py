@@ -8,10 +8,23 @@ import time
 from datetime import datetime, timedelta, date
 from .i18n import ngettext, gettext as _
 
+try:
+    from django.conf import settings # NOQA
+
+except ImportError:
+    utc = None # NOQA
+
+else:
+    if settings.USE_TZ:
+        from django.utils.timezone import utc
+
+    else:
+        utc = None # NOQA
+
 __all__ = ['naturaltime', 'naturalday', 'naturaldate']
 
 def _now():
-    return datetime.now()
+    return datetime.now(utc)
 
 def abs_timedelta(delta):
     """Returns an "absolute" value for a timedelta, always representing a
