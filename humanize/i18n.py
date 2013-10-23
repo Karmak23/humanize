@@ -81,11 +81,14 @@ class django_language(object):
                 activate(current_lang, path=os.path.join(
                          os.path.dirname(__file__), 'locale'))
             except:
-                # Humanize will crash badly if it find no gettext message file.
-                # But we shouldn't because it's harmless, in the end.
-                LOGGER.warning(u'could not switch `humanize` i18n to %s, '
-                               u'its translations will appear in english.',
-                               current_lang)
+                # Humanize will crash badly if it find no gettext message
+                # file. But we shouldn't, because it's harmless in the end.
+                # We don't warn for en-us, it's the default language anyway.
+
+                if current_lang != 'en-us':
+                    LOGGER.warning(u'could not switch `humanize` i18n to %s, '
+                                   u'its translations will appear in english.',
+                                   current_lang)
 
     def __exit__(self, *args, **kwargs):
         try:
