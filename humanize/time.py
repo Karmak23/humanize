@@ -1,38 +1,45 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+""" Time humanizing functions.
 
-"""Time humanizing functions.  These are largely borrowed from Django's
-``contrib.humanize``."""
+These are largely borrowed from Django's ``contrib.humanize``.
+"""
 
-import time
 from datetime import datetime, timedelta, date
 from .i18n import ngettext, gettext as _
 
 try:
-    from django.conf import settings # NOQA
+    from django.conf import settings
 
 except ImportError:
-    utc = None # NOQA
+    utc = None  # NOQA
 
 else:
+    # In Django 1.6, importing settings will not fail,
+    # even if DJANGO_SETTINGS_MODULE is unset… Damned.
+    settings.configure()
+
     if settings.USE_TZ:
         from django.utils.timezone import utc
 
     else:
-        utc = None # NOQA
+        utc = None  # NOQA
 
 __all__ = ['naturaltime', 'naturalday', 'naturaldate']
+
 
 def _now():
     return datetime.now(utc)
 
+
 def abs_timedelta(delta):
     """Returns an "absolute" value for a timedelta, always representing a
     time distance."""
+
     if delta.days < 0:
         now = _now()
         return now - (now + delta)
     return delta
+
 
 def date_and_delta(value):
     """Turn a value into a date and a timedelta which represents how long ago
@@ -53,13 +60,17 @@ def date_and_delta(value):
             return (None, value)
     return date, abs_timedelta(delta)
 
+
 def naturaldelta(value, months=True):
-    """Given a timedelta or a number of seconds, return a natural
-    representation of the amount of time elapsed.  This is similar to
-    ``naturaltime``, but does not add tense to the result.  If ``months``
-    is True, then a number of months (based on 30.5 days) will be used
-    for fuzziness between years."""
-    now = _now()
+    """Return a human representation of a timedelta or a number of seconds.
+
+    This means a representation of the amount of time elapsed.  This is
+    similar to ``naturaltime``, but does not add tense to the result.
+    If ``months`` is True, then a number of months (based on 30.5 days)
+    will be used for fuzziness between years."""
+
+    # now = _now()
+
     date, delta = date_and_delta(value)
     if date is None:
         return value
