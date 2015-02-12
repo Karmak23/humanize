@@ -16,7 +16,11 @@ except ImportError:
 else:
     # In Django 1.6, importing settings will not fail,
     # even if DJANGO_SETTINGS_MODULE is unset… Damned.
-    settings.configure()
+    try:
+        settings.configure()
+    except RuntimeError:
+        # Settings are already configured(). Damned again.
+        pass
 
     if settings.USE_TZ:
         from django.utils.timezone import utc
