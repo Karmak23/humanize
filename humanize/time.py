@@ -18,6 +18,7 @@ else:
     # even if DJANGO_SETTINGS_MODULE is unset… Damned.
     try:
         settings.configure()
+
     except RuntimeError:
         # Settings are already configured(). Damned again.
         pass
